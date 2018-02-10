@@ -8,25 +8,29 @@ import os
 import json
 from urllib import request
 
-
+#getting curent directory
+curent_dir=os.getcwd()                                      
 url='https://op.mos.ru/EHDWSREST/catalog/export/get?id=7080'
 file_name='results.zip'
 folder_name='unpack'
-request.urlretrieve(url,file_name)
-
-patoolib.extract_archive(file_name,outdir=folder_name)
+#download archived file from url
+request.urlretrieve(url,file_name)   
+#extracting the archive in a folder
+patoolib.extract_archive(file_name,outdir=folder_name)      
 file=os.listdir(folder_name)
 
-os.chdir(folder_name)
+#changing curent directory
+os.chdir(folder_name)                                      
 
+#opening file
+myfile=open(file[0], mode="r")    
+#reading file
+data=json.load(myfile) 
 
-myfile=open(file[0], mode="r")
-data=json.load(myfile)
-
-
-def aver_point(subject):
+#function that calculates average score and number of paticipants for a particular subject
+def aver_point(subject):                                    
+    aver=0                                               
     count=0
-    aver=0
     for i in range (0,len(data)):
         if data[i]["SubjectName"]==subject:
             count=count+data[i]["PassedQuantity"]
@@ -38,17 +42,21 @@ subjects=["английский", "биология", "география", "и�
           "история", "литература", "математика", "немецкий", "обществознание", 
           "русский", "физика", "французский", "химия"]
 
-
-root=tk.Tk()
-root.title("Выберите предметы")
-root.geometry("300x450+300+250")
-
-var=[0]*len(subjects)
+#function for an OK button wich closes the widget
+def Quit():                                     
+    global root
+    root.destroy() 
+    
+#widget in which items can be selected
+root=tk.Tk()                                    
+root.geometry("400x520+300+250")
+tk.Label(text="Выберите предметы:",padx=10,pady=6).grid(row=0, column=0, sticky="W")
 for i in range(0,len(subjects)):
     var[i]=tk.BooleanVar()
-    check=tk.Checkbutton(root,text=subjects[i],variable=var[i],onvalue=1,offvalue=0,padx=20,pady=3)
-    check.grid(row=i, column=0, sticky='w')
-     
+    check=tk.Checkbutton(root,text=subjects[i],variable=var[i],onvalue=1,offvalue=0,pady=3)
+    check.grid(row=i+2, column=1, sticky='W')
+
+tk.Button(root, text = 'OK', command=Quit).grid(column=1,pady=10)
 root.mainloop()
 
 subject=[]
@@ -56,28 +64,31 @@ points=[]
 num=[]
 mark=[]
 
-for i in range(0,len(subjects)):
+#list of items for analysis
+for i in range(0,len(subjects)):                       
      if var[i].get()==True:
         subject.append(subjects[i])
-        
-for i in range(0,len(subject)):
+
+#filling in the array with values using the function        
+for i in range(0,len(subject)):                 
     points.append(aver_point(subject[i]))
 myfile.close()
 
-for i in range(0,len(subject)):
+# changing the format of data representation
+for i in range(0,len(subject)):                   
     num.append(points[i][1])
     mark.append(points[i][0])
-
 data_new=pd.DataFrame({"Средний балл":mark, "Число сдававших":num}, index=subject)
 print(data_new)
 
-
-loc_min=min(mark)
+#finding values of local maximum and minimum and their indexes  
+loc_min=min(mark)                                        
 ind_min=mark.index(loc_min)
 loc_max=max(mark)
 ind_max=mark.index(loc_max)
 
-fig, ax=plt.subplots(figsize=(len(subject),5))
+#setting the graphic options
+fig, ax=plt.subplots(figsize=(len(subject),5))          
 plt.plot(subject, mark)
 ax.set_xticklabels(subject, rotation=60)
 plt.title("Средний балл ГИА в Москве")
@@ -90,4 +101,6 @@ ax.annotate('Локальный минимум', xy=(ind_min, loc_min),xytext=(i
             arrowprops=dict(arrowstyle='->',facecolor='black'),   
             annotation_clip=False)
 plt.show()
-os.chdir(curent_dir)
+
+#changing the curent directory to the first one
+os.chdir(curent_dir)                            
