@@ -90,3 +90,4 @@ ax.annotate('Локальный минимум', xy=(ind_min, loc_min),xytext=(i
             arrowprops=dict(arrowstyle='->',facecolor='black'),   
             annotation_clip=False)
 plt.show()
+os.chdir(curent_dir)
