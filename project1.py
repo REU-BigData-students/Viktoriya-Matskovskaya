@@ -10,13 +10,13 @@ from urllib import request
 
 
 
-def func1(url1) :
+def func1(url) :
 #getting curent directory
     curent_dir=os.getcwd()                                      
     file_name='results.zip'
     folder_name='unpack'
 #download archived file from url
-    request.urlretrieve(url1,file_name)   
+    request.urlretrieve(url,file_name)   
 #extracting the archive in a folder
     patoolib.extract_archive(file_name,outdir=folder_name)      
     file=os.listdir(folder_name)
@@ -86,7 +86,7 @@ def func2(subject):
         points.append(aver_point(subject[i],data))
 # changing the format of data representation
     for i in range(0,len(subject)):                   
-        num.append(points[i][1])
+        num.append(int(points[i][1]))
         mark.append(points[i][0])
     data_new=pd.DataFrame({"Средний балл":mark, "Число сдававших":num}, index=subject)
     print(data_new)
@@ -101,12 +101,13 @@ def func3(subject,mark):
     loc_max=max(mark)
     ind_max=mark.index(loc_max)
 #setting the graphic options
-    fig, ax=plt.subplots(figsize=(len(subject),5))          
+    fig, ax=plt.subplots(figsize=(len(subject),5),facecolor="#DCDCDC")          
     plt.plot(subject, mark)
     ax.set_xticklabels(subject, rotation=60)
     plt.title("Средний балл ГИА в Москве")
     plt.ylabel("Значение")
     plt.xlabel("Предмет")
+    ax.yaxis.grid()
     ax.annotate('Локальный максимум', xy=(ind_max, loc_max),xytext=(ind_max, loc_max-0.2),                     
             arrowprops=dict(arrowstyle='->',facecolor='black'),   
             annotation_clip=False)
@@ -124,4 +125,3 @@ subjects=["английский", "биология", "география", "и�
 url='https://op.mos.ru/EHDWSREST/catalog/export/get?id=7080'
 subject=widget(subjects)    
 func3(subject,func2(subject))
-                   
