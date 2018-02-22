@@ -38,11 +38,19 @@ def widget(subjects):
     def Quit():                                     
         global root
         root.destroy()
+    def select_all():
+        for i in range(0,len(subjects)):
+            var[i]=tk.BooleanVar()    
+            check=tk.Checkbutton(root,text=subjects[i],variable=var[i],onvalue=1,offvalue=0,pady=3)
+            check.grid(row=i+2, column=1, sticky='W')
+            check.select()
     global root
     var=[]
+    var1=""
     root=tk.Tk()                                    
     root.geometry("400x520+300+250")
     tk.Label(text="Выберите предметы:",padx=10,pady=6).grid(row=0, column=0, sticky="W")
+    tk.Checkbutton(root,text="Выбрать все",variable=var1,onvalue=1,offvalue=0, command=select_all).grid(row=1, column=1, sticky="W") 
     for i in range(0,len(subjects)):
         var.append("")
         var[i]=tk.BooleanVar()
